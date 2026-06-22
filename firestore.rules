@@ -1,0 +1,16 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Configurações personalizadas de streams do usuário para o Stremio Addon
+    match /user_configs/{uid} {
+      allow read: if true; // O servidor Express e o Stremio precisam ler isso de forma pública
+      allow write: if request.auth != null && request.auth.uid == uid; // Apenas o próprio dono pode atualizar
+    }
+
+    // Logs de streams reproduzidos no Stremio
+    match /playback_logs/{logId} {
+      allow create: if true; // Qualquer play no Stremio pode registrar logs de analítica
+      allow read, update, delete: if request.auth != null && request.auth.uid == resource.data.uid;
+    }
+  }
+}

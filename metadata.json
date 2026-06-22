@@ -1,0 +1,6 @@
+{
+  "name": "Stremio Firebase Addon Hub",
+  "description": "Seu gerenciador pessoal de addons para Stremio. Sincronize canais de IPTV, links de vídeo e catálogos em tempo real via Firebase Firestore, e crie metadados ricos com o auxílio do Gemini AI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

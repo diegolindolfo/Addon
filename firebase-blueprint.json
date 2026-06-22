@@ -1,0 +1,43 @@
+{
+  "entities": {
+    "UserConfig": {
+      "title": "UserConfig",
+      "description": "User custom catalog configuration for Stremio",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "customManifestName": { "type": "string" },
+        "customDescription": { "type": "string" },
+        "streams": {
+          "type": "array"
+        },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "customManifestName", "customDescription", "streams", "updatedAt"]
+    },
+    "PlaybackLog": {
+      "title": "PlaybackLog",
+      "description": "Log of stream playback in Stremio",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "uid": { "type": "string" },
+        "streamId": { "type": "string" },
+        "streamName": { "type": "string" },
+        "streamType": { "type": "string" },
+        "playedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "uid", "streamId", "streamName", "streamType", "playedAt"]
+    }
+  },
+  "firestore": {
+    "user_configs/{uid}": {
+      "schema": "UserConfig",
+      "description": "User personalized addon catalog synced with Stremio"
+    },
+    "playback_logs/{logId}": {
+      "schema": "PlaybackLog",
+      "description": "Dynamic tracking logs of played streams"
+    }
+  }
+}
