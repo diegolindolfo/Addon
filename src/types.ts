@@ -21,6 +21,7 @@ export interface UserConfig {
   uid: string;
   customManifestName: string;
   customDescription: string;
+  customHostUrl?: string;
   streams: StreamItem[];
   updatedAt: string;
 }

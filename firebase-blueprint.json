@@ -8,6 +8,7 @@
         "uid": { "type": "string" },
         "customManifestName": { "type": "string" },
         "customDescription": { "type": "string" },
+        "customHostUrl": { "type": "string" },
         "streams": {
           "type": "array"
         },

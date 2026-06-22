@@ -39,6 +39,7 @@ export default function AddonConfigurator({ user, onLogout }: AddonConfiguratorP
   // Configurações Gerais do Manifesto
   const [manifestName, setManifestName] = useState("Seu Addon Pessoal");
   const [manifestDesc, setManifestDesc] = useState("Playlist sincronizada via Firebase e inteligência artificial.");
+  const [customHostUrl, setCustomHostUrl] = useState("");
 
   // Lista de Streams Cadastrados
   const [streams, setStreams] = useState<StreamItem[]>([]);
@@ -69,8 +70,10 @@ export default function AddonConfigurator({ user, onLogout }: AddonConfiguratorP
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
-  // URLs do Addon para o Stremio
-  const appUrl = window.location.origin;
+  // URLs do Addon para o Stremio (Resolvido dinamicamente se houver Host Customizado como Vercel)
+  const appUrl = customHostUrl 
+    ? (customHostUrl.startsWith("http") ? customHostUrl : `https://${customHostUrl}`).replace(/\/$/, "")
+    : window.location.origin;
   const stremioInstallLink = `stremio://${appUrl.replace(/^https?:\/\//, "")}/api/user/${user.uid}/manifest.json`;
   const stremioManifestHttp = `${appUrl}/api/user/${user.uid}/manifest.json`;
 
@@ -93,6 +96,7 @@ export default function AddonConfigurator({ user, onLogout }: AddonConfiguratorP
         const data = docSnap.data() as UserConfig;
         setManifestName(data.customManifestName || "Meu Addon Premium");
         setManifestDesc(data.customDescription || "Catálogo IPTV e streams em altíssima qualidade.");
+        setCustomHostUrl(data.customHostUrl || "");
         setStreams(data.streams || []);
       } else {
         // Criar dados iniciais de exemplo para o usuário não ficar com catálogo completamente vazio no início
@@ -186,6 +190,7 @@ export default function AddonConfigurator({ user, onLogout }: AddonConfiguratorP
           uid: user.uid,
           customManifestName: manifestName,
           customDescription: manifestDesc,
+          customHostUrl: customHostUrl,
           streams: updatedStreams,
           updatedAt: new Date().toISOString()
         }, { merge: true });
@@ -659,6 +664,29 @@ export default function AddonConfigurator({ user, onLogout }: AddonConfiguratorP
                         rows={3}
                         className="w-full bg-neutral-950 text-white rounded-xl border border-neutral-800 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 px-4 py-3 text-sm transition-colors duration-200 leading-relaxed"
                       />
+                    </div>
+
+                    <div className="border border-neutral-800 bg-neutral-950/30 p-4.5 rounded-2xl space-y-3.5">
+                      <div className="flex items-center gap-2">
+                        <ExternalLink className="w-4 h-4 text-purple-400" />
+                        <span className="text-xs uppercase font-extrabold tracking-widest text-neutral-300">Host de Produção (Vercel / Cloud)</span>
+                      </div>
+                      
+                      <div>
+                        <label className="block text-[10px] font-extrabold text-neutral-400 uppercase tracking-widest mb-1">
+                          URL de Deploy Vercel (Opcional)
+                        </label>
+                        <input
+                          type="text"
+                          value={customHostUrl}
+                          onChange={(e) => setCustomHostUrl(e.target.value.trim())}
+                          placeholder="Ex: addon-red-nine.vercel.app"
+                          className="w-full bg-neutral-950 text-white rounded-xl border border-neutral-800 focus:border-purple-500 focus:outline-none focus:ring-1 focus:ring-purple-500 px-4 py-2.5 text-xs transition-colors duration-200 font-mono"
+                        />
+                        <p className="text-[10px] text-neutral-500 mt-1.5 leading-relaxed font-semibold">
+                          💡 <strong>Por que usar o Vercel?</strong> Os ambientes de testes expiram ao fechar a janela. Seta a sua URL de produção <code>addon-red-nine.vercel.app</code> e as credenciais geradas de 1-clique vão apontar direto para o seu servidor permanente no Vercel no Stremio!
+                        </p>
+                      </div>
                     </div>
 
                     <button

@@ -42,9 +42,8 @@ function getGeminiClient(): GoogleGenAI | null {
   return aiInstance;
 }
 
-async function startServer() {
-  const app = express();
-  const PORT = 3000;
+const app = express();
+const PORT = 3000;
 
   // Use JSON and CORS to comply with Stremio Cross-Origin requests
   app.use(express.json());
@@ -326,11 +325,13 @@ async function startServer() {
   // --- VITE WEB APP INTEGRITY MIDDLEWARE ---
 
   if (process.env.NODE_ENV !== "production") {
-    const vite = await createViteServer({
-      server: { middlewareMode: true },
-      appType: "spa",
-    });
-    app.use(vite.middlewares);
+    (async () => {
+      const vite = await createViteServer({
+        server: { middlewareMode: true },
+        appType: "spa",
+      });
+      app.use(vite.middlewares);
+    })();
   } else {
     const distPath = path.join(process.cwd(), "dist");
     app.use(express.static(distPath));
@@ -339,9 +340,10 @@ async function startServer() {
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`[STREMIO-SERVER] Online at http://0.0.0.0:${PORT}`);
-  });
-}
+  if (!process.env.VERCEL) {
+    app.listen(PORT, "0.0.0.0", () => {
+      console.log(`[STREMIO-SERVER] Online at http://0.0.0.0:${PORT}`);
+    });
+  }
 
-startServer();
+  export default app;
