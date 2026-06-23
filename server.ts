@@ -324,7 +324,7 @@ const PORT = 3000;
 
   // --- VITE WEB APP INTEGRITY MIDDLEWARE ---
 
-  if (process.env.NODE_ENV !== "production") {
+  if (process.env.NODE_ENV !== "production" && !process.env.VERCEL) {
     (async () => {
       const vite = await createViteServer({
         server: { middlewareMode: true },
