@@ -9,8 +9,8 @@ import cors from "cors";
 import { createServer as createViteServer } from "vite";
 import { GoogleGenAI, Type } from "@google/genai";
 import { doc, getDoc, setDoc, updateDoc, collection, addDoc, getDocs, limit, query, orderBy } from "firebase/firestore";
-import { db } from "./src/lib/firebase.js"; // Importing finalized Firebase client
-import { StreamItem, UserConfig } from "./src/types.js";
+import { db } from "./src/lib/firebase"; // Importing finalized Firebase client
+import { StreamItem, UserConfig } from "./src/types";
 
 // Error guards to prevent Node.js process crashing from unhandled SDK/Firestore events
 process.on("unhandledRejection", (reason, promise) => {
@@ -72,7 +72,7 @@ const PORT = 3000;
   // --- STREMIO ADDON API ROUTES ---
 
   // 1. Manifest Endpoint (Customized per User UID)
-  app.get("/api/user/:uid/manifest.json", async (req, res) => {
+  app.get(["/api/user/:uid/manifest.json", "/user/:uid/manifest.json"], async (req, res) => {
     const { uid } = req.params;
     const config = await getUserConfig(uid);
 
@@ -109,7 +109,7 @@ const PORT = 3000;
   });
 
   // 2. Catalogs Endpoint
-  app.get("/api/user/:uid/catalog/:type/:id.json", async (req, res) => {
+  app.get(["/api/user/:uid/catalog/:type/:id.json", "/user/:uid/catalog/:type/:id.json"], async (req, res) => {
     const { uid, type, id } = req.params;
     const config = await getUserConfig(uid);
 
@@ -135,7 +135,7 @@ const PORT = 3000;
   });
 
   // Optional: Stremio Catalog fallback with search parameters
-  app.get("/api/user/:uid/catalog/:type/:id/:extra.json", async (req, res) => {
+  app.get(["/api/user/:uid/catalog/:type/:id/:extra.json", "/user/:uid/catalog/:type/:id/:extra.json"], async (req, res) => {
     const { uid, type, id, extra } = req.params;
     const config = await getUserConfig(uid);
 
@@ -169,7 +169,7 @@ const PORT = 3000;
   });
 
   // 3. Meta Details Endpoint
-  app.get("/api/user/:uid/meta/:type/:id.json", async (req, res) => {
+  app.get(["/api/user/:uid/meta/:type/:id.json", "/user/:uid/meta/:type/:id.json"], async (req, res) => {
     const { uid, type, id } = req.params;
     const config = await getUserConfig(uid);
 
@@ -197,7 +197,7 @@ const PORT = 3000;
   });
 
   // 4. Streams Player Endpoint
-  app.get("/api/user/:uid/stream/:type/:id.json", async (req, res) => {
+  app.get(["/api/user/:uid/stream/:type/:id.json", "/user/:uid/stream/:type/:id.json"], async (req, res) => {
     const { uid, type, id } = req.params;
     const config = await getUserConfig(uid);
 
